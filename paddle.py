@@ -93,7 +93,7 @@ def get_paddleocr_parameter():
     return paddleocr_parameter
 
 
-def main(image):
+def main():
     #load_time = datetime.now()
     # コマンドライン引数
     start_time = datetime.now()
@@ -104,7 +104,7 @@ def main(image):
     args = get_args()
     # enable for input from cmd line
     # image_path = args.image
-    #image_path="254.jpg"
+    image_path="text.png"
     # PaddleOCR準備
     paddleocr_parameter = get_paddleocr_parameter()
 
@@ -123,7 +123,7 @@ def main(image):
     #print("Model load time:", time_difference)
 
     # 画像読み込み
-    #image = cv2.imread(image_path)
+    image = cv2.imread(image_path)
 
     # OCR実施
     dt_boxes, rec_res, time_dict = paddle_ocr_onnx(image)
