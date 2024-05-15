@@ -23,7 +23,7 @@ This project uses paddleOCR to detect and recognise text further this model is c
 
      ```pyhton allclassocr.py```
 
-   This files recognises document sturcture and makes bonding boxes of class detected from list of Text, List, Figure, Table, Title after classification bounding boxes are cropped and given as an input to encopy.py [paddleocr in ONNX format] to detect text.
+   This file recognises document sturcture and makes bonding boxes of class detected from list of Text, List, Figure, Table, Title after classification bounding boxes are cropped and given as an input to encopy.py [paddleocr in ONNX format] to detect text.
 
    If class Table is detected detect_table.py is called to extract text and print output in table format.
 
