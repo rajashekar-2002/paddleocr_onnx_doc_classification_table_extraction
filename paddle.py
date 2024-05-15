@@ -5,19 +5,12 @@ import argparse
 import cv2
 from datetime import datetime, timedelta
 from ppocr_onnx.ppocr_onnx import PaddleOcrONNX
-import os
-import time
-import numpy as np
-
-
-
-
 
 
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--image", type=str, default='./ppocr_onnx/imgs/1.png')
+    parser.add_argument("--image", type=str, default='sample.jpg')
 
     parser.add_argument(
         "--det_model",
@@ -55,8 +48,6 @@ class DictDotNotation(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self
-
-
 
 
 def get_paddleocr_parameter():
@@ -102,9 +93,18 @@ def get_paddleocr_parameter():
     return paddleocr_parameter
 
 
-def main():
+def main(image):
+    #load_time = datetime.now()
     # コマンドライン引数
+    start_time = datetime.now()
+
+
+
+
     args = get_args()
+    # enable for input from cmd line
+    # image_path = args.image
+    #image_path="254.jpg"
     # PaddleOCR準備
     paddleocr_parameter = get_paddleocr_parameter()
 
@@ -117,137 +117,28 @@ def main():
 
     paddle_ocr_onnx = PaddleOcrONNX(paddleocr_parameter)
 
-    # Show camera and perform OCR
-    show_camera()
+    #load_over = datetime.now()
+    #time_difference = load_over - load_time
+    #print("+++++++++++++++++++++")
+    #print("Model load time:", time_difference)
+
+    # 画像読み込み
+    #image = cv2.imread(image_path)
 
     # OCR実施
-    #dt_boxes, rec_res, time_dict = paddle_ocr_onnx(image)
-    # os.remove(image_path)  # Not sure why you're removing an image path here
-    # print(time_dict)
-    #for dt_box, rec in zip(dt_boxes, rec_res):
-        # print(dt_box, rec)
-        # print(rec)
-        #print("---------------------------------------------------------------")
-        #print(rec[0])  # Make sure to indent this line properly
+    dt_boxes, rec_res, time_dict = paddle_ocr_onnx(image)
 
-
-
-
-
-
-
-def gstreamer_pipeline(
-    sensor_id=0,
-    capture_width=540,
-    capture_height=960,
-    display_width=540,
-    display_height=960,
-    framerate=30,
-    flip_method=0,
-    format="NV12",
-):
-    return (
-        "nvarguscamerasrc sensor-id=%d ! "
-        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
-        "nvvidconv flip-method=%d ! "
-        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
-        "videoconvert ! "
-        "video/x-raw, format=(string)BGR ! appsink"
-        % (
-            sensor_id,
-            capture_width,
-            capture_height,
-            framerate,
-            flip_method,
-            display_width,
-            display_height,
-
-        )
-    )
-
-
-
-
-def show_camera():
-    window_title = "CSI Camera"
-
-    args = get_args()
-    paddleocr_parameter = get_paddleocr_parameter()
-
-    paddleocr_parameter.det_model_dir = args.det_model
-    paddleocr_parameter.rec_model_dir = args.rec_model
-    paddleocr_parameter.rec_char_dict_path = args.rec_char_dict
-    paddleocr_parameter.cls_model_dir = args.cls_model
-
-    paddleocr_parameter.use_gpu = args.use_gpu
-
-    paddle_ocr_onnx = PaddleOcrONNX(paddleocr_parameter)
-
-    # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
-    print(gstreamer_pipeline(flip_method=0))
-    video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-    
-    if video_capture.isOpened():
-        try:
-            window_handle = cv2.namedWindow(window_title, cv2.WINDOW_AUTOSIZE)
-            while True:
-                ret_val, frame = video_capture.read()
-                
-                # Check to see if the user closed the window
-                # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
-                # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
-                if cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE) >= 0:
-                    cv2.imshow(window_title, frame)
-                  #  time.sleep(10)  
-                   # Inside the show_camera() function
-
-# After capturing a frame, print its dimensions
-                    frame_uint32 = frame.astype(np.uint32)
-                    print("Frame dimensions:", frame.shape[1], "x", frame.shape[0])  # Width x Height
-                    print("Data type of points:", frame_uint32.dtype)
-                    dt_boxes, rec_res, time_dict = paddle_ocr_onnx(frame_uint32)
-                   # time.sleep(5)  # Delay OCR processing for 6 seconds
-                    # print(time_dict)
-                    for dt_box, rec in zip(dt_boxes, rec_res):
-                        # print(dt_box, rec)
-                        # print(rec)
-                        print("---------------------------------------------------------------")
-                        print(rec[0])  # Make sure to indent this line properly
-                else:
-                    break 
-                    
-                keyCode = cv2.waitKey(10) & 0xFF
-                # Stop the program on the ESC key or 'q'
-                if keyCode == 27 or keyCode == ord('q'):
-                    break
-        finally:
-            video_capture.release()
-            cv2.destroyAllWindows()
-    else:
-        print("Error: Unable to open camera")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
-    start_time = datetime.now()
-
-    main()
     end_time = datetime.now()
     time_difference = end_time - start_time
-    print("=============================================")
-    print("Time Difference:", time_difference)
+    #print("=============================================")
+    #print("Time Difference:", time_difference)
+
+    for dt_box, rec in zip(dt_boxes, rec_res):
+         print(rec[0],dt_box)
+
+
+
+
+
+
+#if __name__ == '__main__':
