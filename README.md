@@ -19,7 +19,7 @@ This project uses paddleOCR to detect and recognise text further this model is c
 
     ```python paddle.py```
 
-5. **Perform document recognition and table data extraction**
+5. **Perform document structure recognition and table data extraction**
 
      ```pyhton allclassocr.py```
 
