@@ -8,7 +8,8 @@ This project uses paddleOCR to detect and recognise text further this model is c
 
 
 2. **Insatll python libraries**
-   
+
+   ``` pip install 'git+https://github.com/facebookresearch/detectron2.git@v0.4#egg=detectron2' ```
     ```pip install -m requirements.txt```
 
 3. **Add model to directory**
